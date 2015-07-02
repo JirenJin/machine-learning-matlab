@@ -7,11 +7,11 @@ x_norm = bsxfun(@rdivide, x, sigma);
 x_aug = [ones(1,n); x_norm];
 
 % set learning hyperparameter
-theta = 1;
+theta = 0.01;
 learning_rate = 0.1;
 % set # of hidden nodes
 
-hidden_n = 15;
+hidden_n = 5;
 % initialization weights
 w12 = randn(3, hidden_n) * 0.001;
 w23 = randn(hidden_n + 1, 1) * 0.001;
@@ -44,7 +44,7 @@ w23 = w23 + update23';
 
 
 % compute cost function
-J = 1/2 * sum((a3 - l).^2)
+J = 1/2 * sum((a3 - l).^2)/n
 if J < theta
     break;
 end
@@ -63,7 +63,7 @@ a3 = sigmoid(z3);
 % round a3 to 0,1
 result = round(a3);
 % number of correct classifications
-sum(result == l)
+correct_classifications = sum(result == l)
 % mean of accuracy
-mean(result == l)
+accuracy = mean(result == l)
 
