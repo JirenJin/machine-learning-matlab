@@ -2,16 +2,35 @@
 
 % C Control the number of misclassifed data point
 C=10;
-sig=0.5;
+sig=1;
 % # of training data
 n=size(x,2);
 
 % Compute K in matrix form
-K=x'*x/sig^2;
-d=diag(K);
-K=K-ones(n,1)*d'/2;
-K=K-d*ones(1,n)/2;
-K=exp(K);
+K3=x'*x/sig^2;
+d=diag(K3);
+K3=K3-ones(n,1)*d'/2;
+K3=K3-d*ones(1,n)/2;
+K3=exp(K3);
+
+% Another way to compute K
+K = zeros(n,n);
+for idx1 = 1:n
+    for idx2 = 1:n
+        K(idx1,idx2) = exp(-(x(:,idx1) - x(:,idx2))' * (x(:,idx1) - x(:,idx2)) / (2*sig^2));
+    end
+end
+% matrix K2
+%K2 = zeros(n,n);
+%d = diag(x'*x);
+%xi_square = d*ones(1,n);
+%xj_square = ones(n,1) * d';
+%xij = x'*x;
+%K2 = -(xi_square + xj_square - 2*xij) / (2*sig^2);
+%K2 = exp(K2);
+%sum(K == K2)
+
+
 % Compute H
 H=l'*l.*K;
 
@@ -40,8 +59,6 @@ b = sum(l(sv) - ff')/length(sv);
 
 
 
-z = randn(2,1);
-f = zeros(n,1);
 
 x1 = linspace(-1,1);
 x2 = linspace(-1,1);
@@ -64,17 +81,6 @@ end
 
 f = reshape(f, 100, 100);
 
-%result = sign(f);
-%sum(result == l')
-
-
-
-
-
-%f=sum(K.*(ones(size(x',1),1)*(l.*alpha)),2);
-
-% b=sum(f)/sum(sv) - l;
-
 figure
 hold on
 plot(x(1,find(l>0 & sv)),x(2,find(l>0 & sv)),'ro');
@@ -82,6 +88,7 @@ plot(x(1,find(l>0 & ~sv)),x(2,find(l>0 & ~sv)),'bo');
 plot(x(1,find(l<0 & sv)),x(2,find(l<0 & sv)),'rx');
 plot(x(1,find(l<0 & ~sv)),x(2,find(l<0 & ~sv)),'bx');
 
+% Plot f(x) = 0, 1, -1
 C = contour(X1, X2, f, [-1 0 1]);
 clabel(C)
 xlim([-1 1]);
